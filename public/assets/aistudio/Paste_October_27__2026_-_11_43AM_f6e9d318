@@ -1,0 +1,1081 @@
+# FLOTA — PRODUCT REQUIREMENTS DOCUMENT (PRD)
+## Version 1.0 — Android Mobile Application
+**Product type:** AI-powered autonomous website development assistant  
+**Development platform:** Google AI Studio  
+**Initial target:** Android mobile application (APK)  
+**Future target:** Separate Windows desktop application (EXE)  
+**Primary language:** English for technical interfaces and code; support Urdu and English for user instructions  
+**UI theme:** White + Light Green  
+**Project priority:** Reliable foundation, functional features, security, performance, usability, and professional-quality output.
+
+---
+
+# 1. PRODUCT VISION
+
+Flota is an AI-powered website development assistant that enables beginners, freelancers, business owners, and professional developers to create, modify, test, and manage websites through natural conversation.
+
+Users should be able to describe a website in plain language, either by typing or speaking. Flota should understand the requirements, ask necessary clarification questions, plan the implementation, generate appropriate frontend and backend code, test the result, diagnose errors, apply fixes, and provide a preview.
+
+When deployment functionality is implemented and configured, Flota should also deploy the website through a supported hosting provider and return a real, accessible URL.
+
+Flota must not be a static website template generator. Each project should have a design and implementation tailored to the client's requirements.
+
+The product should feel like a professional development tool that is nevertheless easy for a beginner to understand.
+
+## Core product principles
+
+1. Build the foundation before polishing the interface.
+2. Implement real functionality rather than simulated buttons or fake progress.
+3. Use a modular architecture that allows individual features to be improved without rewriting the entire application.
+4. Make website creation autonomous after the user approves the requirements and permissions.
+5. Keep the user informed about progress, errors, costs, and actions requiring approval.
+6. Never claim that code has been tested, a website is live, or an operation succeeded unless the result has been verified.
+7. Protect user data and never expose API keys, passwords, OAuth tokens, or other secrets.
+8. Optimize for low-end Android phones, unstable internet connections, and limited budgets.
+
+---
+
+# 2. TARGET USERS
+
+Flota must support these user groups:
+
+- Beginners who have never written code.
+- Freelancers who create websites for clients.
+- Small-business owners who need business websites.
+- Developers who want to accelerate their work.
+- Users who need complete source code and control over their projects.
+
+The interface must not assume that every user understands technical terminology.
+
+Advanced functionality should remain available without making the default interface confusing.
+
+---
+
+# 3. PLATFORM AND DEVELOPMENT SCOPE
+
+## Phase 1: Android mobile application
+
+Build and test the Android application first.
+
+Requirements:
+
+- Mobile-first layouts.
+- Responsive screens for different Android screen sizes.
+- Touch-friendly controls.
+- Support for Android back navigation.
+- Keyboard-safe chat and editor layouts.
+- Proper loading, empty, success, and error states.
+- Local project persistence.
+- Google sign-in using Firebase Authentication.
+- Optional synchronization of selected project information.
+- Secure AI integration.
+- A buildable Android project with reproducible APK instructions.
+
+The application must not depend on owning a public domain simply to install or use the app.
+
+**Important implementation rule:** Select a technology that can genuinely produce an Android APK. If the available Google AI Studio environment cannot compile a native Android project, generate the complete source repository and provide a verified Android Studio build workflow. Do not pretend a web preview is an installed Android app.
+
+## Phase 2: Windows desktop application
+
+This phase is outside the initial implementation.
+
+When requested, develop a separate Windows application with its own interface and packaging process. Reuse suitable backend APIs and shared business logic where practical, but do not force the mobile interface into a desktop layout.
+
+Deliver a Windows EXE only after the Windows build has actually succeeded.
+
+---
+
+# 4. ARCHITECTURE AND FOUNDATION
+
+Implement the application in separate, testable modules.
+
+## 4.1 Suggested architecture
+
+**Android client**
+- Presentation and navigation.
+- Authentication interface.
+- Chat and voice input.
+- Project workspace.
+- Local project database.
+- Code and preview interfaces.
+- Synchronization and error reporting.
+
+**Core application layer**
+- Requirement analysis.
+- Project planning.
+- AI request orchestration.
+- Code-generation workflow.
+- Validation and test orchestration.
+- Version history.
+- Deployment-provider abstraction.
+
+**Backend and integrations**
+- Firebase Authentication.
+- Cloud Firestore for approved, synchronized metadata.
+- Firebase App Check where supported.
+- Secure server-side AI requests through an appropriate backend.
+- Optional Firebase Cloud Functions or another supported server environment.
+- Future hosting-provider integrations.
+
+Use Kotlin and Jetpack Compose for a native Android implementation where the selected development environment supports it. Use MVVM or an equivalent maintainable architecture, coroutines, and Flow where appropriate.
+
+Use a repository layer to separate UI code from local storage, remote data, authentication, and AI services.
+
+Choose compatible, stable library versions. Document dependency choices and avoid unnecessary libraries.
+
+## 4.2 Foundation-first implementation order
+
+Build in this sequence:
+
+1. Project configuration and dependency management.
+2. Application architecture and navigation.
+3. Error handling and logging.
+4. Local persistence and recovery.
+5. Authentication and secure session handling.
+6. Backend service interfaces and synchronization.
+7. AI service integration.
+8. Website project data model.
+9. Website generation workflow.
+10. Code validation and testing.
+11. Preview and deployment integrations.
+12. Final UI polish and accessibility.
+
+Do not build the UI as a static mockup and then attempt to connect all features afterward. Implement screens against real application state and working service interfaces.
+
+---
+
+# 5. DATA OWNERSHIP, PRIVACY, AND SYNCHRONIZATION
+
+Data ownership is a fundamental product requirement.
+
+## 5.1 Local-first project storage
+
+Store the user's working project files and generated source code locally by default.
+
+Use a suitable local database for structured project information and the application's file system for generated code and assets.
+
+The app should preserve project state across:
+
+- App restarts.
+- Unexpected process termination.
+- Temporary network outages.
+- Device restarts.
+
+Local project data must not be deleted merely because synchronization fails.
+
+## 5.2 Firebase account and recovery
+
+Use Firebase Authentication with Google sign-in.
+
+When the user signs in, allow synchronization of explicitly selected information, such as:
+
+- Project names and identifiers.
+- User-approved project settings.
+- Saved requirement summaries.
+- Selected conversation history.
+- Project synchronization status.
+- Version metadata and recovery information.
+
+The app must clearly explain which information is stored locally and which is sent to Firebase.
+
+A reinstall should restore previously synchronized information after the user signs in again. Unsynchronized local files cannot be guaranteed to survive uninstalling the app; warn users before they uninstall or clear app data.
+
+## 5.3 Privacy rules
+
+- Never store passwords in Firestore.
+- Never upload all project files without user consent.
+- Never expose private source code through public database rules.
+- Do not upload Google Drive content without explicit authorization.
+- Do not request Google Drive access unless the user chooses that feature.
+- Allow the user to delete synchronized data and sign out.
+- Provide a clear explanation before transmitting source code or client assets to an external AI service.
+- Do not send API keys or private credentials inside AI prompts unless strictly necessary; normally, secrets should not be sent to the model at all.
+
+Firebase security rules must enforce user-level access control. A user must not be able to read or modify another user's private records by changing a document identifier.
+
+## 5.4 Cloud and local processing
+
+Use local storage for project files and working state by default, Firebase for account identity and explicitly synchronized data, and a secure backend for AI requests requiring secret credentials.
+
+Do not embed a production Gemini API key in the APK. Client-side code can be extracted.
+
+The secure AI backend is a separate component from the mobile app. Configure it so that authentication, authorization, rate limiting, and usage limits are enforced.
+
+**Budget requirement:** Prefer free-tier services where available, but do not assume that Firebase, AI inference, storage, or hosting will remain free without limits. Display or document relevant quotas and possible costs.
+
+---
+
+# 6. AUTHENTICATION AND ONBOARDING
+
+## 6.1 First launch
+
+Show a short, understandable onboarding sequence:
+
+1. Welcome to Flota.
+2. Explain that the user can create websites by typing or speaking.
+3. Explain that projects can be stored locally.
+4. Explain the optional Google sign-in and synchronization feature.
+5. Offer the main workspace.
+
+Allow the user to explore the basic interface without being forced to sign in, where security and the selected feature permit it.
+
+Require authentication before accessing private synchronized data.
+
+## 6.2 Google sign-in
+
+The Google sign-in button must:
+
+- Launch the supported authentication flow.
+- Display progress during authentication.
+- Handle cancellation.
+- Display understandable error messages.
+- Prevent duplicate login requests.
+- Restore the authenticated session where appropriate.
+- Avoid storing authentication tokens insecurely.
+
+Never display a success state until Firebase confirms authentication.
+
+## 6.3 Account recovery
+
+After reinstalling the app, users should be able to sign in using the same Google account and recover synchronized projects.
+
+Clearly distinguish:
+
+- Restored cloud-synchronized projects.
+- Local projects available on the current device.
+- Projects that were never synchronized.
+
+---
+
+# 7. USER INTERFACE AND DESIGN SYSTEM
+
+## 7.1 Required visual identity
+
+The UI must follow this exact direction:
+
+- Primary background: white.
+- Primary accent: light green.
+- Text: dark, high-contrast neutral colors.
+- Cards: white or subtly tinted surfaces.
+- Borders: thin, understated outlines.
+- Corners: moderately rounded.
+- Shadows: subtle and restrained.
+- Typography: readable and consistent.
+- Buttons: clearly outlined or visibly defined, with subtle interaction feedback.
+- Layout: clean, spacious, and familiar.
+
+Avoid unnecessary gradients, excessive animations, crowded dashboards, decorative charts, and complex navigation.
+
+Do not independently invent a dark theme or change the agreed color palette. A dark theme may be added later as an optional setting.
+
+Use a consistent design system with reusable color, typography, spacing, shape, and button definitions.
+
+## 7.2 Main navigation
+
+Use a simple mobile navigation structure.
+
+Recommended primary destinations:
+
+1. Home.
+2. Projects.
+3. Settings.
+
+The main creation workspace should remain the primary focus. Avoid adding navigation items for features that are not implemented.
+
+## 7.3 Home screen
+
+Display the Flota name and a concise welcome message.
+
+Main heading:
+
+**"What would you like to build today?"**
+
+Provide a large, accessible message composer.
+
+The composer must support:
+
+- Multiline text input.
+- A send button.
+- A voice-input button.
+- Clear indication of whether a request is being processed.
+- Editing the unsent message.
+- Recovery of a draft after accidental navigation where practical.
+
+Suggested starter actions:
+
+- Create a Business Website.
+- Build an Online Store.
+- Create a Portfolio.
+- Improve an Existing Website.
+
+These are shortcuts that populate or initiate a request; they must not generate a fake completed website.
+
+## 7.4 Conversation screen
+
+Use a familiar conversational layout.
+
+Display:
+
+- User messages.
+- Flota responses.
+- Requirement clarification questions.
+- Progress updates.
+- Tool and test results.
+- Warnings and errors.
+- Approval requests for sensitive actions.
+
+Support long conversations without unnecessarily re-rendering the entire screen after each update.
+
+Do not make the user scroll through excessive technical logs to understand the current status. Provide an expandable technical-details section for advanced users.
+
+## 7.5 Project workspace
+
+Each project should have a dedicated workspace containing:
+
+- Project name.
+- Current status.
+- Requirement summary.
+- Generated files.
+- Version history.
+- Preview access.
+- Test results.
+- Deployment status.
+- Export options.
+
+Use clear tabs or sections rather than placing every tool on one screen.
+
+## 7.6 Website completion screen
+
+When a project is complete, show clearly labeled actions:
+
+- Preview Website.
+- View Source Code.
+- Export Project.
+- Edit Website.
+- Test Website.
+- Deploy Website.
+
+Only show a live URL as active when deployment has succeeded and the resulting URL has been verified.
+
+If deployment has not been configured, explain what remains to be done.
+
+## 7.7 Settings
+
+Include:
+
+- Google account and sign-out.
+- Data synchronization preferences.
+- Local storage information.
+- AI configuration status.
+- Privacy information.
+- Usage and error details where available.
+- App version.
+- Data deletion controls.
+
+Never display secret API keys in plain text.
+
+---
+
+# 8. CHAT AND VOICE INTERACTION
+
+## 8.1 Text chat
+
+The user can describe a website in ordinary language.
+
+Example:
+
+"I need a modern website for my clothing business. It should have product categories, product details, a shopping cart, contact information, and an admin dashboard."
+
+Flota must identify the requirements and ask only necessary clarification questions.
+
+The user should be able to correct requirements during development without starting the project again.
+
+## 8.2 Voice input
+
+Provide a microphone button for speech-to-text input.
+
+Requirements:
+
+- Request microphone permission only when needed.
+- Explain why the permission is required.
+- Show a clear recording state.
+- Allow recording cancellation.
+- Display recognized text for review before sending, unless the user explicitly enables direct voice submission.
+- Handle unavailable microphone permissions and speech recognition errors.
+- Provide text input as an alternative.
+
+Voice input must not be represented as functional until the actual speech-recognition integration has been configured and tested.
+
+## 8.3 Conversational editing
+
+Support instructions such as:
+
+- "Make the design cleaner."
+- "Change the primary color."
+- "Add an About Us page."
+- "Fix the mobile layout."
+- "Add a contact form."
+- "Explain why this test failed."
+
+Flota should modify the relevant project instead of unnecessarily rebuilding everything.
+
+Before applying major destructive changes, preserve the previous version and ask for confirmation when appropriate.
+
+---
+
+# 9. WEBSITE REQUIREMENTS ANALYSIS
+
+Before generating code, convert the user's request into a structured project specification.
+
+Identify:
+
+- Website purpose.
+- Intended audience.
+- Required pages.
+- Required features.
+- Visual direction.
+- Content and assets.
+- Responsive behavior.
+- Data requirements.
+- Authentication requirements.
+- Backend requirements.
+- Integrations.
+- Security constraints.
+- Hosting and deployment requirements.
+
+Ask targeted questions only when missing information materially affects the implementation.
+
+If the user has no specific design preference, propose a design and clearly communicate the proposal before proceeding with high-impact choices.
+
+Once requirements are sufficiently clear, produce a concise plan showing:
+
+1. What will be built.
+2. Which technologies will be used and why.
+3. Which files and components are required.
+4. Whether a backend or database is necessary.
+5. How the result will be tested.
+6. What external services or configuration are required.
+
+Avoid unnecessary questions about details that can be reasonably inferred.
+
+---
+
+# 10. WEBSITE GENERATION ENGINE
+
+This is the central capability of Flota.
+
+## 10.1 Design generation
+
+Generate a website design appropriate to the client's business and requirements.
+
+Do not reuse an identical page structure for every project.
+
+Vary relevant design decisions, including:
+
+- Page hierarchy.
+- Navigation style.
+- Hero composition.
+- Typography.
+- Color palette.
+- Card layouts.
+- Content presentation.
+- Interaction patterns.
+- Mobile navigation.
+- Appropriate animations.
+
+Design variation must remain purposeful and consistent with the client's brand. Random visual differences are not a substitute for good design.
+
+Do not copy a competitor's protected assets or reproduce another website wholesale without authorization.
+
+## 10.2 Frontend generation
+
+Generate appropriate frontend code using a suitable, documented technology stack.
+
+Requirements:
+
+- Reusable components.
+- Consistent design tokens.
+- Responsive layouts.
+- Semantic markup where applicable.
+- Accessible controls.
+- Input validation.
+- Loading and error states.
+- Maintainable file structure.
+- No unnecessary duplicated code.
+- No hardcoded secrets.
+- No placeholder buttons presented as functional features.
+
+## 10.3 Backend generation
+
+When the requirements need a backend, generate the necessary server-side code and configuration.
+
+Depending on the project, this may include:
+
+- API endpoints.
+- Data models.
+- Database access.
+- Authentication and authorization.
+- Validation.
+- Error handling.
+- Logging.
+- Security controls.
+- Environment configuration.
+- Database migrations.
+- Tests.
+- Deployment instructions.
+
+Do not automatically generate an unnecessary backend for a purely static website.
+
+For features that genuinely require a backend, do not simulate functionality with local JavaScript and claim the backend is complete.
+
+## 10.4 Project structure
+
+Create a coherent project with:
+
+- Readable source files.
+- Appropriate dependency manifests.
+- Environment variable examples.
+- Setup documentation.
+- Testing instructions.
+- Deployment instructions.
+- Required configuration files.
+
+Never put real credentials in example environment files.
+
+If a requirement cannot be implemented without external credentials or services, explain the requirement and identify the missing configuration.
+
+---
+
+# 11. GOOGLE DRIVE AND CLIENT ASSETS
+
+Google Drive integration is optional, not mandatory.
+
+The user must be able to create a website without connecting Google Drive.
+
+If the user chooses Drive integration:
+
+1. Initiate Google's supported authorization flow.
+2. Request only the necessary permissions.
+3. Let the user choose the relevant files or folders.
+4. Display the selected assets.
+5. Use authorized assets in the website generation workflow.
+6. Handle revoked permissions, missing files, and network errors.
+7. Avoid copying unrelated files.
+8. Explain whether selected assets are sent to an external AI service.
+
+Also support other input methods, such as selecting local images or entering a public asset URL where appropriate.
+
+Do not assume that the app has access to the user's Drive simply because they signed in with Google.
+
+---
+
+# 12. CODE VALIDATION AND AUTOMATIC ERROR RECOVERY
+
+Code generation is incomplete until validation has been performed.
+
+Implement the following workflow:
+
+1. Generate the required project files.
+2. Validate file structure and required configuration.
+3. Install or resolve dependencies in a controlled environment.
+4. Run applicable formatting, linting, type checks, and static analysis.
+5. Execute automated tests.
+6. Build the frontend.
+7. Build or start the backend where applicable.
+8. Run available integration tests.
+9. Inspect relevant logs and failures.
+10. Apply targeted fixes.
+11. Re-run the failed checks.
+12. Record the verified results.
+
+The exact checks must match the selected technology stack.
+
+## Error recovery
+
+When a step fails:
+
+- Preserve the existing project and source code.
+- Capture a useful error message.
+- Identify the failing stage.
+- Attempt a limited, controlled recovery when safe.
+- Avoid repeatedly running the same failing operation without changing the cause.
+- Keep the user informed.
+- Provide a manual recovery option if automatic recovery fails.
+
+Do not overwrite a working version without preserving a recoverable checkpoint.
+
+Never report "all tests passed" if tests were skipped, unavailable, or failed.
+
+## Execution security
+
+Generated code must run in an appropriately isolated environment with restricted permissions.
+
+Do not execute arbitrary generated code directly on the user's Android device with unrestricted access to the device or its files.
+
+Restrict filesystem access, network access, process permissions, resource consumption, and execution time as appropriate to the execution environment.
+
+---
+
+# 13. PREVIEW, TESTING, AND LIVE DEPLOYMENT
+
+These are separate capabilities and must be presented accurately.
+
+## 13.1 Preview
+
+Provide a preview of the generated website using a supported rendering environment.
+
+A mobile application can display a hosted preview or an embedded preview where supported. It must not claim to have opened desktop Chrome on the user's device unless that action actually occurred.
+
+Show a useful error if the preview cannot load.
+
+## 13.2 Website testing
+
+Test relevant behavior, including:
+
+- Navigation.
+- Responsive layouts.
+- Forms and validation.
+- Interactive controls.
+- Backend endpoints.
+- Authentication and authorization.
+- Database operations.
+- Error states.
+- Relevant security checks.
+
+Testing must be appropriate to the actual features generated.
+
+## 13.3 Deployment
+
+Create a deployment-provider interface so hosting integrations can be added independently.
+
+Deployment requires a real provider integration, valid authorization, configuration, and any necessary hosting resources.
+
+A future implementation may support an appropriate provider such as Firebase Hosting, Vercel, or another service, subject to its current terms and capabilities.
+
+Deployment workflow:
+
+1. Verify that the project is buildable.
+2. Display the target hosting provider.
+3. Check required configuration and authorization.
+4. Obtain confirmation for publishing actions when appropriate.
+5. Deploy through the provider's actual API or supported CLI workflow.
+6. Capture the deployment result.
+7. Verify the returned URL.
+8. Display the URL and deployment status.
+
+Never fabricate a URL or claim that a website is public when it has not been deployed.
+
+A free hosting subdomain may be available, but availability, quotas, supported frameworks, and pricing depend on the selected provider. A custom domain may require payment.
+
+---
+
+# 14. SOURCE CODE EXPORT
+
+Users must be able to obtain their project source code.
+
+Provide a project export containing the relevant files, such as:
+
+- Frontend source code.
+- Backend source code where applicable.
+- Dependency manifests.
+- Configuration templates.
+- Database schema or migrations.
+- Tests.
+- README documentation.
+- Deployment instructions.
+
+Use a standard archive format such as ZIP for the complete project.
+
+The export must not contain:
+
+- Private API keys.
+- OAuth refresh tokens.
+- Passwords.
+- Private signing keys.
+- Local secret files.
+- Unnecessary private user data.
+
+Include an example environment file with placeholders where required.
+
+Before presenting the export as successful, verify that the archive was actually created and contains the expected files.
+
+Allow the user to inspect individual files before export.
+
+---
+
+# 15. PROJECT MANAGEMENT AND VERSION HISTORY
+
+Users should be able to:
+
+- Create a project.
+- Rename a project.
+- Open a saved project.
+- Continue an existing conversation.
+- Review generated files.
+- View previous versions.
+- Restore a previous version.
+- Export a project.
+- Delete a project.
+
+Use unique project identifiers.
+
+Autosave local changes where practical.
+
+Avoid losing user work if the application closes unexpectedly.
+
+When cloud synchronization is enabled, handle conflicts explicitly. Do not silently overwrite newer work with older data.
+
+---
+
+# 16. PERFORMANCE AND RELIABILITY
+
+Flota must be designed to remain responsive under realistic workloads.
+
+## Android performance
+
+- Use asynchronous operations for network requests and file processing.
+- Do not block the main UI thread with long-running tasks.
+- Avoid loading entire projects into memory when unnecessary.
+- Paginate or incrementally load long conversation histories.
+- Avoid unnecessary recompositions and repeated expensive calculations.
+- Cache appropriate results.
+- Cancel obsolete requests.
+- Debounce suitable user inputs.
+- Show progress for long-running operations.
+- Preserve drafts and project state.
+- Support cancellation where safe.
+
+## Backend performance
+
+- Apply request timeouts.
+- Use controlled retries with exponential backoff and jitter where appropriate.
+- Avoid retrying non-idempotent operations without a safe recovery strategy.
+- Enforce per-user quotas and concurrency limits.
+- Limit request and response sizes.
+- Reuse connections and resources appropriately.
+- Monitor latency, errors, and resource usage.
+- Avoid unbounded queues and uncontrolled parallel tasks.
+- Handle provider rate limits and temporary service outages.
+- Cache only where correctness and privacy permit.
+
+## Multiple users
+
+The architecture must support independent user sessions and isolated projects.
+
+No user's project data may leak into another user's response or workspace.
+
+Prevent concurrent operations from corrupting the same project.
+
+Define workload limits according to available infrastructure rather than promising unlimited usage.
+
+## Recovery
+
+The app should recover gracefully from:
+
+- Network disconnections.
+- Authentication expiration.
+- AI provider failures.
+- Rate limits.
+- Invalid generated code.
+- Build failures.
+- Insufficient local storage.
+- Interrupted synchronization.
+- Unexpected application termination.
+
+Use structured logs with sensitive data redacted.
+
+---
+
+# 17. SECURITY REQUIREMENTS
+
+Security must be implemented as part of the foundation.
+
+Required measures:
+
+- Secure Google authentication.
+- Correct Firebase Security Rules.
+- Backend authorization checks.
+- Protected AI credentials.
+- Server-side rate limiting.
+- Input validation.
+- Safe error handling.
+- Secure transport using HTTPS.
+- Least-privilege access.
+- Secure local storage for sensitive data.
+- Dependency vulnerability checks where available.
+- Isolation of generated code execution.
+- Protection against prompt injection and malicious project files.
+- Prevention of unauthorized deployment or access to private repositories.
+
+Do not trust the mobile client alone to enforce permissions.
+
+Do not allow a model-generated instruction to override application security controls.
+
+Any action that publishes a website, incurs a cost, or changes external resources must follow the relevant authorization and confirmation rules.
+
+---
+
+# 18. AI REQUEST ORCHESTRATION
+
+Implement a structured workflow rather than sending the entire project to the model on every request.
+
+Each AI task should include only the relevant requirements, file context, tool results, and constraints.
+
+Maintain a clear distinction between:
+
+- Requirement analysis.
+- Planning.
+- File generation.
+- File editing.
+- Validation.
+- Testing.
+- Deployment.
+
+Use structured responses or validated schemas where appropriate.
+
+Validate model-generated file paths, commands, configuration, and tool arguments before executing them.
+
+Do not assume AI-generated code is correct simply because the model returned a successful response.
+
+When context becomes too large, summarize relevant project decisions and retrieve specific files as needed.
+
+Preserve the user's explicit design and functional requirements across edits.
+
+---
+
+# 19. TESTING STRATEGY
+
+Testing must cover both individual components and complete user workflows.
+
+## Unit tests
+
+Test:
+
+- Requirement parsing.
+- Project data models.
+- File management.
+- Versioning.
+- Validation logic.
+- Error classification.
+- Synchronization decisions.
+
+## Integration tests
+
+Test:
+
+- Firebase authentication.
+- Database access rules.
+- Local persistence.
+- Synchronization.
+- AI service communication.
+- File export.
+- Website build and test orchestration.
+- Deployment integration when configured.
+
+## UI tests
+
+Test:
+
+- First launch.
+- Google sign-in and cancellation.
+- Sending a text request.
+- Voice permission denial.
+- Project creation.
+- Opening a saved project.
+- Editing requirements.
+- Viewing test results.
+- Exporting source code.
+- Handling network failure.
+- Signing out.
+
+## Required end-to-end scenarios
+
+**Scenario A: Local project**
+
+The user creates a project, closes the app, reopens it, and can continue working.
+
+**Scenario B: Account recovery**
+
+The user synchronizes a project, reinstalls the app, signs in with the same Google account, and retrieves the synchronized information.
+
+**Scenario C: AI failure**
+
+The AI service fails or reaches a rate limit. The user receives a clear explanation, and the project is not corrupted.
+
+**Scenario D: Invalid generated code**
+
+A generated project fails validation. Flota identifies the failure, attempts a controlled fix, and accurately reports the final result.
+
+**Scenario E: Export**
+
+The user exports a project and receives a valid archive without embedded secrets.
+
+**Scenario F: Deployment**
+
+The configured hosting provider accepts the deployment. Flota verifies the result before presenting the URL.
+
+**Scenario G: User isolation**
+
+Two different users cannot access each other's private projects.
+
+Do not claim a scenario passed until it has actually been executed.
+
+---
+
+# 20. MVP ACCEPTANCE CRITERIA
+
+The first release should be considered ready for evaluation only when the following applicable criteria are met.
+
+### Foundation
+- [ ] The application builds using the documented workflow.
+- [ ] The architecture separates UI, data, and business logic.
+- [ ] Core operations do not block the UI thread.
+- [ ] Errors are handled without crashing the application unnecessarily.
+- [ ] Local projects survive normal app restarts.
+
+### Account and data
+- [ ] Google sign-in works using Firebase Authentication.
+- [ ] Private cloud data is protected by tested security rules.
+- [ ] Selected project information synchronizes successfully.
+- [ ] Synchronized data can be recovered after reinstalling.
+- [ ] Unsynchronized data loss risks are clearly explained.
+
+### User experience
+- [ ] The white and light-green design is consistent.
+- [ ] The home screen is understandable to beginners.
+- [ ] Text input works.
+- [ ] Voice input works if the integration is enabled.
+- [ ] Progress and error states reflect actual operations.
+- [ ] The interface adapts to supported mobile screen sizes.
+
+### Website generation
+- [ ] Flota can turn a clear request into a structured plan.
+- [ ] It can generate a coherent project in the selected stack.
+- [ ] It validates the generated project using available tools.
+- [ ] It reports test results accurately.
+- [ ] It preserves previous versions before risky edits.
+- [ ] It can export the generated source code.
+
+### Deployment
+- [ ] Deployment works with a real, configured provider before being advertised as available.
+- [ ] The returned URL is verified.
+- [ ] Unconfigured deployment is clearly identified as unavailable.
+
+### Security and performance
+- [ ] No production AI key is embedded in the APK.
+- [ ] Generated code execution is appropriately isolated.
+- [ ] Users cannot access each other's private data.
+- [ ] Network failures do not unnecessarily destroy local work.
+- [ ] Resource use and concurrency have defined limits.
+
+---
+
+# 21. IMPLEMENTATION PHASES
+
+## Phase 1 — Foundation
+
+Implement the project structure, navigation, local persistence, dependency configuration, error handling, and test infrastructure.
+
+**Deliverable:** A buildable Android foundation with persistent local state.
+
+## Phase 2 — Authentication and data
+
+Implement Google sign-in, Firebase Authentication, secure data rules, and optional synchronization.
+
+**Deliverable:** A working account and recovery flow.
+
+## Phase 3 — Chat and AI
+
+Implement text input, requirement analysis, structured planning, and secure AI service communication.
+
+**Deliverable:** A working conversational workflow.
+
+## Phase 4 — Website generation
+
+Implement project generation, file management, editing, versioning, and validation.
+
+**Deliverable:** A generated website project with real source files.
+
+## Phase 5 — Testing and preview
+
+Implement the test pipeline, error recovery, and supported preview functionality.
+
+**Deliverable:** A project that can be inspected and tested.
+
+## Phase 6 — Export and deployment
+
+Implement safe source-code export and a real hosting-provider integration.
+
+**Deliverable:** A verified export and, once configured, a verified live URL.
+
+## Phase 7 — Quality assurance
+
+Run the acceptance tests, review security, assess performance, fix defects, and document limitations.
+
+**Deliverable:** A release candidate and a transparent test report.
+
+Do not mark a phase complete merely because its interface has been generated.
+
+---
+
+# 22. REQUIRED DEVELOPMENT DOCUMENTATION
+
+Maintain the following documentation alongside the source code:
+
+1. Architecture overview.
+2. Project directory structure.
+3. Dependency and version list.
+4. Local build instructions.
+5. Firebase setup instructions.
+6. Authentication configuration.
+7. Environment variable reference.
+8. Database schema and security rules.
+9. AI provider configuration.
+10. Test execution instructions.
+11. Error and troubleshooting guide.
+12. APK build instructions.
+13. Known limitations.
+14. Deployment setup instructions.
+15. Security considerations.
+
+Never include real production secrets in the documentation.
+
+Clearly identify manual setup steps that cannot be completed automatically by the development environment.
+
+---
+
+# 23. DEFINITION OF DONE
+
+A feature is complete only when:
+
+- Its behavior matches the requirement.
+- Its interface is connected to real functionality.
+- Inputs are validated.
+- Relevant errors are handled.
+- Data persistence works where required.
+- Permissions are enforced.
+- Tests have been run where applicable.
+- The result has been reviewed.
+- Known limitations are documented.
+
+A visually complete screen is not proof that its underlying feature works.
+
+A successful code-generation response is not proof that the project builds.
+
+A successful build is not proof that the website is deployed.
+
+A returned hosting URL is not proof that the website is accessible.
+
+Verify each stage independently.
+
+---
+
+# 24. FINAL PRODUCT GOAL
+
+Flota must become a reliable, approachable, AI-powered website development assistant that allows users to describe what they want, collaborate through text or voice, receive a tailored website implementation, inspect and test its code, recover their work, and obtain a deployable project.
+
+The initial Android release must establish a secure and maintainable foundation before advanced functionality is added.
+
+Prioritize correctness, maintainability, privacy, predictable behavior, and a clear user experience over the number of advertised features.
+
+**End of PRD — Version 1.0**
